@@ -1,0 +1,149 @@
+{% extends 'myadmin/index.html' %}
+
+{% block title %}
+<title>后台会员列表</title>
+{% endblock %}
+
+
+{% block con %}
+<div class="row-content am-cf">
+   <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
+        <div class="widget am-cf">
+            <div class="widget-head am-cf">
+                <div class="widget-title  am-cf">会员列表</div>
+
+
+            </div>
+            <div class="widget-body  am-fr">
+
+                <div class="am-u-sm-12 am-u-md-6 am-u-lg-6">
+                    <div class="am-form-group">
+                        <div class="am-btn-toolbar">
+                            <div class="am-btn-group am-btn-group-xs">
+                                <a href="{% url 'myadmin_user_add' %}" type="button" class="am-btn am-btn-default am-btn-success"><span class="am-icon-plus"></span> 新增</a>
+                                <button type="button" class="am-btn am-btn-default am-btn-secondary"><span class="am-icon-save"></span> 保存</button>
+                                <button type="button" class="am-btn am-btn-default am-btn-warning"><span class="am-icon-archive"></span> 审核</button>
+                                <button type="button" class="am-btn am-btn-default am-btn-danger"><span class="am-icon-trash-o"></span> 删除</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form>
+                    <div class="am-u-sm-12 am-u-md-6 am-u-lg-3">
+                        <div class="am-form-group tpl-table-list-select">
+                            <select name="types" data-am-selected="{btnSize: 'sm'}" style="display: none;">
+                              <option value="all">所有</option>
+                              <option value="id">ID</option>
+                              <option value="nikeame">昵称</option>
+                              <option value="phone">手机号</option>
+                              <option value="email">邮箱</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="am-u-sm-12 am-u-md-12 am-u-lg-3">
+                    <div class="am-input-group am-input-group-sm tpl-form-border-form cl-p">
+                        <input type="text" name="keywords" class="am-form-field ">
+                        <span class="am-input-group-btn">
+                            <button class="am-btn  am-btn-default am-btn-success tpl-table-list-field am-icon-search"></button>
+                          </span>
+                    </div>
+                </div>
+
+                <div class="am-u-sm-12">
+                    <table width="100%" class="am-table am-table-compact am-table-striped tpl-table-black ">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>用户缩略图</th>
+                                <th>昵称</th>
+                                <th>手机号</th>
+                                <th>邮箱</th>
+                                <th>年龄</th>
+                                <th>性别</th>
+                                <th>状态</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for i in userlist %}
+                            <tr class="gradeX">
+                                
+                                <td class="am-text-middle">{{i.id}}</td>
+                                <td>
+                                    <img src="{{i.pic_url}}" height=70 class="tpl-table-line-img" alt="">
+                                </td>
+                                <td class="am-text-middle">{{i.nikename}}</td>
+                                <td class="am-text-middle">{{i.phone}}</td>
+                                <td class="am-text-middle">{{i.email}}</td>
+                                <td class="am-text-middle">{{i.age}}</td>
+                                <td class="am-text-middle">
+                                    {% if i.sex == '0' %}
+                                        女
+                                    {% elif i.sex == '1' %}
+                                        男
+                                    {% else %}
+                                        保密
+                                    {% endif %}
+                                </td>
+                                <td class="am-text-middle">
+                                    {% if i.status == 0 %}
+                                        正常
+                                    {% elif i.status == 1 %}
+                                        冻结
+                                    {% endif %}
+                                </td>
+                                <td class="am-text-middle">{{i.addtime}}</td>
+
+                                <td class="am-text-middle">
+                                    <div class="tpl-table-black-operation">
+                                        <a href="{% url 'myadmin_user_edit' %}?uid={{i.id}}">
+                                            <i class="am-icon-pencil"></i> 编辑
+                                        </a>
+                                        <a href="javascript:;" class="tpl-table-black-operation-del">
+                                            <i class="am-icon-trash"></i> 删除
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}    
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="am-u-lg-12 am-cf">
+
+                    <div class="am-fr">
+                        <ul class="am-pagination tpl-pagination">
+                            
+                            <!-- {%
+                            <li><a href="?page={{pages.0}}">«</a></li>
+                            {% for i in pages %}
+                                <li><a href="?page={{i}}">{{i}}</a></li>
+                            {% endfor %}
+                            <li><a href="?page={{pages_max}}">»</a></li>
+                            %} -->
+                            <!-- <li class="am-active"><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#">4</a></li>
+                            <li><a href="#">5</a></li> -->
+
+                            {% load pagetag %}
+                            <!-- userlist.paginator.num_pages 为总页数 -->
+                            {% showPage userlist.paginator.num_pages request 6 %}
+
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
