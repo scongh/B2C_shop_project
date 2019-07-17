@@ -79,9 +79,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'cong', # 库名
-        'USER': 'cong',
+        'USER': 'root',
         'PASSWORD': '123456',
-        'HOST': '192.168.9.37',
+        # 'HOST': '192.168.9.37', # cong 的IP
+        'HOST': 'localhost',
         'PORT': '3306',
     }
 }
