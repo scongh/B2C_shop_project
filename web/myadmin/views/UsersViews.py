@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 
 from django.contrib.auth.hashers import make_password, check_password
 from .. models import Users
@@ -7,6 +7,8 @@ import os
 
 from web.settings import BASE_DIR
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+from django.db.models import Q
 
 # Create your views here.
 # 用户模型的管理
@@ -50,9 +52,21 @@ def user_index(request):
     # 获取所有用户数据
     data = Users.objects.all()
 
+    # 获取搜索条件
+    types = request.GET.get('types',None)
+    keywords = request.GET.get('keywords',None)
+    # 搜索判断
+    if types=="all":
+        data = data.filter(Q(id__contains = keywords) | Q(nikename__contains = keywords) | Q(phone__contains = keywords) | Q(email__contains = keywords))
+    # elif types=='id':
+    #     data = data.filter(id__contains = keywords)
+    elif types:
+        search = {types+'__contains': keywords}
+        data = data.filter(**search)
+
     # 导入分页类
     from django.core.paginator import Paginator
-    p = Paginator(data, 3) # 实例化
+    p = Paginator(data, 10) # 实例化
     # 获取当前的页码数
     page_index = request.GET.get('page',1)
     # 获取当前 页数
@@ -120,3 +134,12 @@ def user_edit(request):
         # 显示编辑表单
         context = {'uinfo': uob}
         return render(request,'myadmin/users/edit.html/',context)
+
+# 会员状态修改
+def user_set_status(request):
+    # 通过uid获取 会员对象
+    ob = Users.objects.get(id=request.GET.get('uid'))
+    ob.status = request.GET.get('status')
+    ob.save()
+    return JsonResponse({'msg':'状态更新成功','code':0})
+    

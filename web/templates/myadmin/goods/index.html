@@ -1,7 +1,7 @@
 {% extends 'myadmin/index.html' %}
 
 {% block title %}
-<title>后台会员列表</title>
+<title>后台商品分类列表</title>
 {% endblock %}
 
 
@@ -10,7 +10,7 @@
    <div class="am-u-sm-12 am-u-md-12 am-u-lg-12">
         <div class="widget am-cf">
             <div class="widget-head am-cf">
-                <div class="widget-title  am-cf">会员列表</div>
+                <div class="widget-title  am-cf">商品分类列表</div>
 
 
             </div>
@@ -20,7 +20,7 @@
                     <div class="am-form-group">
                         <div class="am-btn-toolbar">
                             <div class="am-btn-group am-btn-group-xs">
-                                <a href="{% url 'myadmin_user_add' %}" type="button" class="am-btn am-btn-default am-btn-success"><span class="am-icon-plus"></span> 新增</a>
+                                <a href="{% url 'myadmin_good_add' %}" type="button" class="am-btn am-btn-default am-btn-success"><span class="am-icon-plus"></span> 新增</a>
                                 <button type="button" class="am-btn am-btn-default am-btn-secondary"><span class="am-icon-save"></span> 保存</button>
                                 <button type="button" class="am-btn am-btn-default am-btn-warning"><span class="am-icon-archive"></span> 审核</button>
                                 <button type="button" class="am-btn am-btn-default am-btn-danger"><span class="am-icon-trash-o"></span> 删除</button>
@@ -35,9 +35,9 @@
                             <select name="types" data-am-selected="{btnSize: 'sm'}" style="display: none;">
                               <option value="all" {% if request.GET.types == 'all' %}selected{% endif %}>所有</option>
                               <option value="id" {% if request.GET.types == 'id' %}selected{% endif %}>ID</option>
-                              <option value="nikename" {% if request.GET.types == 'nikename' %}selected{% endif %}>昵称</option>
-                              <option value="phone" {% if request.GET.types == 'phone' %}selected{% endif %}>手机号</option>
-                              <option value="email" {% if request.GET.types == 'email' %}selected{% endif %}>邮箱</option>
+                              <option value="nikename" {% if request.GET.types == 'goodsname' %}selected{% endif %}>商品名称</option>
+                              
+                              
                             </select>
                         </div>
                     </div>
@@ -57,14 +57,17 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>用户缩略图</th>
-                                <th>昵称</th>
-                                <th>手机号</th>
-                                <th>邮箱</th>
-                                <th>年龄</th>
-                                <th>性别</th>
+                                <th>缩略图</th>
+                                <th>名称</th>
+                                <th>价格</th>
+                                <th>库存量</th>
+                                <th>销量</th>
+                                <th>点击量</th>
+                                <th>标题</th>
+                                <th>所属分类</th>
+                                <th>商品描述</th>
                                 <th>状态</th>
-                                <th>注册时间</th>
+                                <th>入库时间</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -76,39 +79,31 @@
                                 
                                 <td class="am-text-middle">{{i.id}}</td>
                                 <td>
-                                    <img src="{{i.pic_url}}" height=70 class="tpl-table-line-img" alt="">
+                                    <img src="{{i.pic_url}}" height=100 class="tpl-table-line-img" alt="">
                                 </td>
-                                <td class="am-text-middle">{{i.nikename}}</td>
-                                <td class="am-text-middle">{{i.phone}}</td>
-                                <td class="am-text-middle">{{i.email}}</td>
-                                <td class="am-text-middle">{{i.age}}</td>
+                                <td class="am-text-middle">{{i.goodsname}}</td>
+                                <td class="am-text-middle">{{i.price}}</td>
+                                <td class="am-text-middle">{{i.goodsnum}}</td>
+                                <td class="am-text-middle">{{i.ordernum}}</td>
+                                <td class="am-text-middle">{{i.clicknum}}</td>
+                                <td class="am-text-middle">{{i.title}}</td>
+                                <!-- 对象的引用 -->
+                                <td class="am-text-middle">{{i.cateid.name}}</td>
+                                <td class="am-text-middle">{{i.goodsinfo}}</td>
+                                
                                 <td class="am-text-middle">
-                                    {% if i.sex == '0' %}
-                                        女
-                                    {% elif i.sex == '1' %}
-                                        男
-                                    {% else %}
-                                        保密
-                                    {% endif %}
-                                </td>
-                                <td class="am-text-middle">
-                                    <!-- {#
-                                    {% if i.status == 0 %}
-                                        正常
-                                    {% elif i.status == 1 %}
-                                        冻结
-                                    {% endif %}
-                                    #} -->
                                     <select uid="{{i.id}}" class="select-status" style="color:#101010;background:#eeddee">
-                                        <option value="0" {% if i.status == 0 %}selected{%endif%}>正常</option>
-                                        <option value="1" {% if i.status == 1 %}selected{%endif%}>禁用</option>
+                                        <option value="0" {% if i.status == 0 %}selected{%endif%}>新品</option>
+                                        <option value="1" {% if i.status == 1 %}selected{%endif%}>推荐</option>
+                                        <option value="2" {% if i.status == 1 %}selected{%endif%}>热卖</option>
+                                        <option value="3" {% if i.status == 1 %}selected{%endif%}>下架</option>
                                     </select>
                                 </td>
                                 <td class="am-text-middle">{{i.addtime}}</td>
 
                                 <td class="am-text-middle">
                                     <div class="tpl-table-black-operation">
-                                        <a href="{% url 'myadmin_user_edit' %}?uid={{i.id}}">
+                                        <a href="{% url 'myadmin_good_add' %}?uid={{i.id}}">
                                             <i class="am-icon-pencil"></i> 编辑
                                         </a>
                                         <a href="javascript:;" class="tpl-table-black-operation-del">
@@ -117,7 +112,7 @@
                                     </div>
                                 </td>
                             </tr>
-                        {% endfor %}    
+                        {% endfor %} 
 
                         </tbody>
                     </table>
@@ -126,23 +121,7 @@
 
                     <div class="am-fr">
                         <ul class="am-pagination tpl-pagination">
-                            
-                            <!-- {%
-                            <li><a href="?page={{pages.0}}">«</a></li>
-                            {% for i in pages %}
-                                <li><a href="?page={{i}}">{{i}}</a></li>
-                            {% endfor %}
-                            <li><a href="?page={{pages_max}}">»</a></li>
-                            %} -->
-                            <!-- <li class="am-active"><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">5</a></li> -->
 
-                            {% load pagetag %}
-                            <!-- userlist.paginator.num_pages 为总页数 -->
-                            {% showPage userlist.paginator.num_pages request 6 %}
 
                             
                         </ul>
@@ -153,21 +132,65 @@
     </div>
 </div>
 <script type="text/javascript">
-    $('.select-status').change(function(){
-        // 获取元素的值
-        var status = $(this).val();
-        // 元素的id
-        var uid = $(this).attr('uid');
-        // console.log(status,uid);
+    // 删除
+    $('.removeCate').click(function(){
+        // 获取商品分类的idname
+        var cid = $(this).attr('cid')
+        // alert(cid)
+        // 存 删除的<a> 节点
+        var a = $(this)
 
-        $.get('{% url 'myadmin_user_set_status' %}',
-            {'uid':uid,'status':status},
+        $.get('{% url 'myadmin_cate_del' %}',
+            {'cid':cid},
             function(data){
                 // 判断当前的返回值
                 if(data['code']==0){
-                    alert(data['msg']);
+                    // 删除整跳数据
+                    // $(this).parents('tr').remove() // ajax中，this为XMLHttprequest
+                    a.parents('tr').remove()
                 }
+                alert(data['msg']);
             },'json')
+    })
+
+    // 编辑 -- name
+    $('.cate_name').dblclick(function(){
+        // 第一步
+        // 获取name
+        var catename = $(this).find('span').text()
+        // alert(catename)
+        // 添加标签
+        var int = $('<input type="text" value="'+catename+'" style="width:100px">')
+        // 标签替换
+        $(this).find('span').html(int)
+        // 让input的值 处于双击全选状态
+        int.select()
+
+        var span = $(this).find('span')
+        // 获取id
+        var cid = span.attr('cid')
+        // 第二步 -- 失去焦点
+        int.blur(function(){
+            var newname=$(this).val()
+
+            // 转回 span标签
+            span.html(catename)
+
+            // 那么是否被修改
+            if(newname!=catename){
+                $.get('{% url 'myadmin_cate_edit' %}',
+                    {'cid':cid, 'newname':newname},
+                    function(data){
+                        if(data['code']==0){
+                            span.html(newname)
+                            // alert(data['msg'])
+                        }
+                    },'json')
+            }
+            
+        })
+
+
     })
 </script>
 {% endblock %}
