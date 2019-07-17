@@ -23,26 +23,36 @@ def showPage(count,request,h):
 	elif(count<= p + int(h/2)):
 		start = count-h + 1
 
+	# 获取当前请求的所有参数
+	data = request.GET.dict()
+	args = ''
+	for i,j in data.items():
+		# print(i,j)
+		if(i != 'page'):
+			args += '&'+ i + '=' + j
+	print(args)
 	page_html = ''
 	
 	
 	if(p>1):
 		# 跳到首页
-		page_html += '<li><a href="?page=1">«</a></li>'
+		page_html += '<li><a href="?page=1{}">«</a></li>'.format(args)
 		# 下一页
-		page_html += '<li><a href="?page={}">上一页</a></li>'.format(p-1)
+		page_html += '<li><a href="?page={0}{1}">上一页</a></li>'.format((p-1),args)
+	if(count<h):
+		h = count
 	for i in range(h):
 		# print(start+i,end=' , ')
 		# page_html += str(start+i)
 		if(p == start+i):
-			page_html += '<li class="am-active"><a href="?page={p}">{p}</a></li>'.format(p=start+i)
+			page_html += '<li class="am-active"><a href="?page={p}{args}">{p}</a></li>'.format(p=start+i,args=args)
 		else:
-			page_html += '<li><a href="?page={p}">{p}</a></li>'.format(p=start+i)
+			page_html += '<li><a href="?page={p}{args}">{p}</a></li>'.format(p=start+i,args=args)
 	
 	if(p<count):
 		# 下一页		
-		page_html += '<li><a href="?page={}">下一页</a></li>'.format(p+1)
+		page_html += '<li><a href="?page={0}{1}">下一页</a></li>'.format((p+1),args)
 		# 跳到尾页
-		page_html += '<li><a href="?page={}">»</a></li>'.format(count)
+		page_html += '<li><a href="?page={0}{1}">»</a></li>'.format(count,args)
 
 	return format_html(page_html)
