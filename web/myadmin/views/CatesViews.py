@@ -4,6 +4,9 @@ from django.http import HttpResponse,JsonResponse
 # Create your views here.
 from .. models import Cates
 
+from django.db.models import Q
+
+
 # 商品类别添加
 def cate_add(request):
     if(request.method == 'POST'):
@@ -28,8 +31,8 @@ def cate_add(request):
     	return HttpResponse('<script>alert("添加成功");location.href="/myadmin/cate/index/";</script>')
     else:
     	# 获取当前已有的 分类数据
-    	# catelist = Cates.objects.all()
-    	catelist = get_cates_all()
+    	catelist = Cates.objects.all()
+    	catelist = get_cates_all(catelist)
     	# 分配
     	context = {'catelist': catelist} # catelist 为里面的数据
     	# 加载商品模板页面
@@ -38,20 +41,46 @@ def cate_add(request):
 
 # 商品类别列表
 def cate_index(request):
-	data = get_cates_all()
-	# data = Cates.objects.all()
-	context = {'catelist': data}
+	data = Cates.objects.all() 
+
+	# 获取搜索条件
+	types = request.GET.get('types',None)
+	keywords = request.GET.get('keywords',None)
+	# 搜索判断
+	if types=="all":
+		# 筛选处理－－包含
+		data = data.filter(Q(id__contains = keywords) | Q(name__contains = keywords))
+		
+	# elif types=='id':
+	#     data = data.filter(id__contains = keywords)
+	elif types:
+		search = {types+'__contains': keywords}
+		data = data.filter(**search)
+	
+
+	# 导入分页类
+	from django.core.paginator import Paginator
+	p = Paginator(data, 10) # 实例化
+    # 获取当前的页码数
+	page_index = request.GET.get('page',1)
+    # 获取当前 页数
+	user_list = p.page(page_index)
+
+	data = get_cates_all(data) #缩减
+		
+	# res = Cates.objects.all()
+	context = {'catelist': data,'userlist': user_list}
 	return render(request,'myadmin/cates/index.html',context)
 
 # 排序+缩减格式化
-def get_cates_all():
+def get_cates_all(data):
 	# 排列方式 
 	# sql = "SELECT *,CONCAT(path,id) AS paths FROM myadmin_cates ORDER BY paths;"
 	# sql注入 -- 容易出现漏洞
 	# data = Cates.objects.raw(sql)s
 
 	# django的排序
-	data = Cates.objects.extra(select = {'paths':'concat(path,id)'}).order_by('paths')
+	data = data.extra(select = {'paths':'concat(path,id)'}).order_by('paths')
 
 	# 缩进处理
 	for i in data:
@@ -65,6 +94,7 @@ def get_cates_all():
 		else:
 			pob = Cates.objects.get(id = i.id)
 			i.pname = pob.name
+		# print(i.tab+i.name)
 	return data
 
 # 商品分类删除

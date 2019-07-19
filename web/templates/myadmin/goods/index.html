@@ -20,10 +20,7 @@
                     <div class="am-form-group">
                         <div class="am-btn-toolbar">
                             <div class="am-btn-group am-btn-group-xs">
-                                <a href="{% url 'myadmin_good_add' %}" type="button" class="am-btn am-btn-default am-btn-success"><span class="am-icon-plus"></span> 新增</a>
-                                <button type="button" class="am-btn am-btn-default am-btn-secondary"><span class="am-icon-save"></span> 保存</button>
-                                <button type="button" class="am-btn am-btn-default am-btn-warning"><span class="am-icon-archive"></span> 审核</button>
-                                <button type="button" class="am-btn am-btn-default am-btn-danger"><span class="am-icon-trash-o"></span> 删除</button>
+                                <a href="{% url 'myadmin_good_add' %}" type="button" class="am-btn am-btn-default am-btn-warning"><span class="am-icon-plus"></span> 新增</a>
                             </div>
                         </div>
                     </div>
@@ -35,8 +32,11 @@
                             <select name="types" data-am-selected="{btnSize: 'sm'}" style="display: none;">
                               <option value="all" {% if request.GET.types == 'all' %}selected{% endif %}>所有</option>
                               <option value="id" {% if request.GET.types == 'id' %}selected{% endif %}>ID</option>
-                              <option value="nikename" {% if request.GET.types == 'goodsname' %}selected{% endif %}>商品名称</option>
-                              
+                              <option value="goodsname" {% if request.GET.types == 'goodsname' %}selected{% endif %}>商品名称</option>
+
+                              <option id="price_section" value="price" {% if request.GET.types == 'price' %}selected{% endif %}>价格区间</option>
+
+                              <option value="cateid" {% if request.GET.types == 'cateid' %}selected{% endif %}>所属分类</option>
                               
                             </select>
                         </div>
@@ -74,7 +74,7 @@
 
                         <tbody>
 
-                        {% for i in userlist %}
+                        {% for i in goodslist %}
                             <tr class="gradeX">
                                 
                                 <td class="am-text-middle">{{i.id}}</td>
@@ -92,21 +92,21 @@
                                 <td class="am-text-middle">{{i.goodsinfo}}</td>
                                 
                                 <td class="am-text-middle">
-                                    <select uid="{{i.id}}" class="select-status" style="color:#101010;background:#eeddee">
+                                    <select gid="{{i.id}}" class="goods-status btn-sm dropdown-toggle btn-danger">
                                         <option value="0" {% if i.status == 0 %}selected{%endif%}>新品</option>
                                         <option value="1" {% if i.status == 1 %}selected{%endif%}>推荐</option>
-                                        <option value="2" {% if i.status == 1 %}selected{%endif%}>热卖</option>
-                                        <option value="3" {% if i.status == 1 %}selected{%endif%}>下架</option>
+                                        <option value="2" {% if i.status == 2 %}selected{%endif%}>热卖</option>
+                                        <option value="3" {% if i.status == 3 %}selected{%endif%}>下架</option>
                                     </select>
                                 </td>
                                 <td class="am-text-middle">{{i.addtime}}</td>
 
                                 <td class="am-text-middle">
                                     <div class="tpl-table-black-operation">
-                                        <a href="{% url 'myadmin_good_add' %}?uid={{i.id}}">
+                                        <a href="{% url 'myadmin_good_edit' %}?gid={{i.id}}">
                                             <i class="am-icon-pencil"></i> 编辑
                                         </a>
-                                        <a href="javascript:;" class="tpl-table-black-operation-del">
+                                        <a href="javascript:;" gid={{i.id}} class="removegoods tpl-table-black-operation-del">
                                             <i class="am-icon-trash"></i> 删除
                                         </a>
                                     </div>
@@ -133,15 +133,15 @@
 </div>
 <script type="text/javascript">
     // 删除
-    $('.removeCate').click(function(){
+    $('.removegoods').click(function(){
         // 获取商品分类的idname
-        var cid = $(this).attr('cid')
-        // alert(cid)
+        var gid = $(this).attr('gid')
+        // alert(gid)
         // 存 删除的<a> 节点
         var a = $(this)
 
-        $.get('{% url 'myadmin_cate_del' %}',
-            {'cid':cid},
+        $.get('{% url 'myadmin_good_del' %}',
+            {'gid':gid},
             function(data){
                 // 判断当前的返回值
                 if(data['code']==0){
@@ -153,44 +153,24 @@
             },'json')
     })
 
-    // 编辑 -- name
-    $('.cate_name').dblclick(function(){
-        // 第一步
-        // 获取name
-        var catename = $(this).find('span').text()
-        // alert(catename)
-        // 添加标签
-        var int = $('<input type="text" value="'+catename+'" style="width:100px">')
-        // 标签替换
-        $(this).find('span').html(int)
-        // 让input的值 处于双击全选状态
-        int.select()
+    // 状态更改
+    $('.goods-status').change(function(){
+        // 获取元素的状态码
+        var status = $(this).val();
 
-        var span = $(this).find('span')
-        // 获取id
-        var cid = span.attr('cid')
-        // 第二步 -- 失去焦点
-        int.blur(function(){
-            var newname=$(this).val()
+        // 元素的id
+        var gid = $(this).attr('gid');
+        // alert(gid+status)
 
-            // 转回 span标签
-            span.html(catename)
-
-            // 那么是否被修改
-            if(newname!=catename){
-                $.get('{% url 'myadmin_cate_edit' %}',
-                    {'cid':cid, 'newname':newname},
-                    function(data){
-                        if(data['code']==0){
-                            span.html(newname)
-                            // alert(data['msg'])
-                        }
-                    },'json')
-            }
-            
-        })
-
-
+        $.get('{% url 'myadmin_good_status' %}',
+            {'gid':gid,'status':status},
+            function(data){
+                // 判断当前的返回值
+                if(data['code']==0){
+                    alert(data['msg']);
+                }
+            },'json')
     })
+
 </script>
 {% endblock %}

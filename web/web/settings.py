@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myhome',
     'myadmin',
+    'ueditor',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #自定义的中间件--后台登录使用 -- 文件夹myadmin AdminMiddleware.py 类：AdminLoginMiddleware
+    'myadmin.views.AdminMiddleware.AdminLoginMiddleware',
 ]
 
 ROOT_URLCONF = 'web.urls'

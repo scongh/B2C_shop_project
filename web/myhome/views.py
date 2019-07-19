@@ -5,5 +5,4 @@ from django.http import HttpResponse
 
 def index(request):
     
-    # return HttpResponse('网站前台首页')
-    return render(request,'myadmin/index.html')
+    return HttpResponse('网站前台首页')

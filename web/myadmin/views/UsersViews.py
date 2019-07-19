@@ -105,7 +105,7 @@ def user_edit(request):
     # 获取会员用户对象
     uob = Users.objects.get(id=uid)
 
-    print(uid)
+    # print(uid)
     # # 判读当前的请求方式
     if request.method == 'POST':
         # 执行更新操作

@@ -30,7 +30,7 @@ class Cates(models.Model):
 # 商品模型
 class Goods(models.Model):
     # 所属分类id 、商品name、商品标题、价格、数量、图片-路径、商品的描述、销量、点击次数
-    cateid = models.ForeignKey(to='Cates', to_field='id')
+    cateid = models.ForeignKey(to='Cates', to_field='id') # 多对一
     goodsname = models.CharField(max_length=50)
     title = models.CharField(max_length=255)
     price = models.FloatField()
@@ -42,3 +42,5 @@ class Goods(models.Model):
     # 状态--0新品、1热卖、2推荐、3下架   、 添加时间
     status = models.IntegerField(default=0)
     addtime = models.DateTimeField(auto_now_add=True)
+
+    

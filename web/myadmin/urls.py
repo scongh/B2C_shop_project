@@ -1,8 +1,20 @@
 from django.conf.urls import url
-from . views import IndexViews,UsersViews,CatesViews,GoodsViews
+from . views import IndexViews,UsersViews,CatesViews,GoodsViews,IndexViews
 
 urlpatterns = [
-    url(r'^$',IndexViews.index,name="myadmin_index"),
+	# 登录
+    url(r'^login/$',IndexViews.myadmin_login,name="myadmin_login"),
+    # 登录处理 - 首页
+    url(r'^dologin/$',IndexViews.myadmin_dologin,name="myadmin_dologin"),
+    # 验证码
+    url(r'^varifycode/$',IndexViews.varifycode,name="myadmin_vcode"),
+    # 退出登录
+    url(r'^uplogin/$',IndexViews.myadmin_uplogin,name="myadmin_uplogin"),
+
+
+    # 首页
+    url(r'^index/$',IndexViews.index,name="index"),
+
 
     # 会员管理
     url(r'^user/add/$',UsersViews.user_add,name="myadmin_user_add"),
@@ -14,6 +26,7 @@ urlpatterns = [
     # 会员状态修改
     url(r'^user/setstatus/$',UsersViews.user_set_status,name='myadmin_user_set_status'),
 
+
     # 商品分类管理
     # 商品分类数据 添加
     url(r'^cate/add/$',CatesViews.cate_add,name="myadmin_cate_add"),
@@ -24,11 +37,17 @@ urlpatterns = [
     # ----编辑
     url(r'^cate/edit/$',CatesViews.cate_edit,name="myadmin_cate_edit"),
 
+
     # 商品管理
     url(r'^good/add/$',GoodsViews.good_add,name="myadmin_good_add"),
     url(r'^good/insert/$',GoodsViews.good_insert,name="myadmin_good_insert"),
 
     url(r'^good/index/$',GoodsViews.good_index,name="myadmin_good_index"),
+    # 删除goods_del
+    url(r'^good/del/$',GoodsViews.good_del,name="myadmin_good_del"),
+    # 编辑 -- 状态
+    url(r'^good/status/$',GoodsViews.good_status,name="myadmin_good_status"),
+    # 商品编辑
+    url(r'^good/edit/$',GoodsViews.good_edit,name="myadmin_good_edit"),
 
-    
 ]
