@@ -83,3 +83,23 @@ def varifycode(request):
     im.save(buf, 'png')
     # 将内存中的图片数据返回给客户端，MIME类型为图片png
     return HttpResponse(buf.getvalue(), 'image/png')
+
+
+# 权限管理
+def myadmin_authuser_index(request):
+    return render(request,'myadmin/suth/index.html')
+    
+def myadmin_authuser_add(request):
+    pass
+
+def myadmin_authuser_insert(request):
+    pass
+
+def myadmin_authgroup_index(request):
+    pass
+
+def myadmin_authgroup_add(request):
+    pass
+
+def myadmin_authgroup_insert(request):
+    pass

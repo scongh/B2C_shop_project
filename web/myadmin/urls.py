@@ -50,4 +50,17 @@ urlpatterns = [
     # 商品编辑
     url(r'^good/edit/$',GoodsViews.good_edit,name="myadmin_good_edit"),
 
+
+    # 权限管理
+    # 管理员管理
+    url(r'^auth/user/idnex/$',IndexViews.myadmin_authuser_index,name="myadmin_authuser_index"),
+    url(r'^auth/user/add/$',IndexViews.myadmin_authuser_add,name="myadmin_authuser_add"),
+    url(r'^auth/user/insert/$',IndexViews.myadmin_authuser_insert,name="myadmin_authuser_insert"),
+    
+    # 权限组管理
+    url(r'^auth/group/idnex/$',IndexViews.myadmin_authgroup_index,name="myadmin_authgroup_index"),
+    url(r'^auth/group/add/$',IndexViews.myadmin_authgroup_add,name="myadmin_authgroup_add"),
+    url(r'^auth/group/insert/$',IndexViews.myadmin_authgroup_insert,name="myadmin_authgroup_insert"),
+
+
 ]

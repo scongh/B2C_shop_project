@@ -56,14 +56,16 @@ def good_index(request):
     # data = Cates.objects.all()
     # data = get_cates_all(data)
     data = Goods.objects.all()
+
     # 获取搜索条件
     types = request.GET.get('types',None)
     keywords = request.GET.get('keywords',None)
     # 搜索判断
     if types=="all":#price cateid
-        res = Cates.objects.filter(name__contains = keywords)
-        for i in res:
-            data = data.filter(cateid=i.id)
+        # # 父类查询
+        # res = Cates.objects.filter(name__contains = keywords)
+        # for i in res:
+        #     data = data.filter(cateid=i.id)
             
         data = data.filter(Q(id__contains = keywords) | Q(goodsname__contains = keywords))
 
@@ -72,15 +74,26 @@ def good_index(request):
     #     data = data.filter(id__contains = keywords)
     # 所属分类
     elif types=="cateid":
-        # data.cateid.name
+        # 父类查询
         res = Cates.objects.filter(name__contains = keywords)
         for i in res:
             data = data.filter(cateid=i.id)
+
+        # [data.filter(cateid=i.id) for i in res]
+        # data = data.filter(cateid__in=[data.filter(cateid=i.id).pid for i in res])
     elif types:
         search = {types+'__contains': keywords}
         data = data.filter(**search)
 
-    context = {'goodslist': data}
+    # 导入分页类
+    from django.core.paginator import Paginator
+    p = Paginator(data, 10) # 实例化
+    # 获取当前的页码数
+    page_index = request.GET.get('page',1)
+    # 获取当前 页数
+    user_list = p.page(page_index)
+
+    context = {'goodslist': data,'userlist': user_list}
 
     return render(request,'myadmin/goods/index.html',context)
 

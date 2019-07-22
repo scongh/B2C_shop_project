@@ -115,8 +115,9 @@ def user_edit(request):
         # 判断头像是否更新
         myfile = request.FILES.get('pic',None)
         if myfile:
-            # 有新头像上传，则先删除原头像
-            os.remove(BASE_DIR+uob.pic_url)
+            # 有新头像上传，则先删除原头像 -- 留着不删
+            if uob.pic_url:
+                os.remove(BASE_DIR+uob.pic_url)
             # 更新头像
             uob.pic_url = uploads_pic(myfile)
 
@@ -142,4 +143,7 @@ def user_set_status(request):
     ob.status = request.GET.get('status')
     ob.save()
     return JsonResponse({'msg':'状态更新成功','code':0})
-    
+
+
+
+
